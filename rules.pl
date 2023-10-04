@@ -1,27 +1,30 @@
 :- use_module(library(lists)).
+:- use_module(library("clpfd")).
 
+position_row((Row, _), Row).
+position_leter((_, Letter), Letter).
 
 colorwards_movement(black, (Previous, Next)) :-
-  position_number(Previous, N1),
-  position_number(Next, N2),
-  N1 < N2.
+  position_row(Previous, N1),
+  position_row(Next, N2),
+  N1 #< N2.
 
 
 colorwards_movement(white, (Previous, Next)) :-
-  position_number(Previous, N1),
-  position_number(Next, N2),
-  N1 > N2.
+  position_row(Previous, N1),
+  position_row(Next, N2),
+  N1 #> N2.
 
 
 vertical_movement(Movement) :- 
-  blackwards_movement(Movement);
-  whitewards_movement(Movement).
+  colorwards_movement(black, Movement);
+  colorwards_movement(white, Movement).
 
 
-sideways_movement(Previous, Next) :-
+sideways_movement((Previous, Next)) :-
   position_leter(Previous, L1),
   position_leter(Next, L2),
-  L1 != L2.
+  L1 #\= L2.
 
 
 diagonal_movement(Movement) :-
@@ -35,43 +38,42 @@ opposite_color(white, black).
 
 
 enemywise_movement(Board, (From, To)) :-
-  opposite_color(PieceColor, EnemyColor)
+  opposite_color(PieceColor, EnemyColor),
   piece_at_position(Board, From, (_, PieceColor)),
   player_color(Board, From, PieceColor),
-  colorwise_movement(EnemyColor, To).
+  colorwards_movement(EnemyColor, To).
 
 
-capture(pawn, Movement) :-
+legal_move(pawn, Board, Movement) :-
   diagonal_movement(Movement),
-  enemywise_movement(Movement).
+  enemywise_movement(Board, Movement).
 
-
-legal_move(pawn, Movement) :-
-  capture(pawn, Movement).
-
-legal_move(pawn, Movement):-
-  enemywise_movement(Movement),
+legal_move(pawn, Board, Movement):-
+  enemywise_movement(Board, Movement),
   not(diagonal_movement(Movement)).
 
-legal_move(bishop, Movement) :- diagonal_movement(Movement).
+legal_move(bishop, _, Movement) :-
+  diagonal_movement(Movement).
 
-legal_move(tower, Movement) :-
+legal_move(tower, _, Movement) :-
   vertical_movement(Movement),
   not(diagonal_movement(Movement)).
 
-legal_move(tower, Movement) :-
+legal_move(tower, _, Movement) :-
   sideways_movement(Movement),
   not(diagonal_movement(Movement)).
 
-legal_move(queen, Movement) :-
-  legal_move(tower, Movement);
-  legal_move(queen, Movement).
+legal_move(queen, _, Movement) :-
+  legal_move(tower, _, Movement);
+  legal_move(bishop, _, Movement).
 
-legal_move(nothing, _):- false.
+% define castling
+
+legal_move(nothing, _, _):- false.
 
 
 letter_as_idx(Letter, Idx) :-
-  nth1(Idx, "ABCDEFGH" Letter).
+  nth1(Idx, "ABCDEFGH", Letter).
 
 
 piece_at_position(Board, (Number, Letter), Piece) :-
@@ -85,8 +87,8 @@ player_color(Board, Location, Color) :-
 
 
 valid_position((Number, Letter)) :-
-  Number < 0,
-  Number > 9,
+  Number #< 0,
+  Number #> 9,
   member(Letter, "ABCDEFGH").
 
 
@@ -94,12 +96,12 @@ player_movement(Color, Board, From, To) :-
   valid_position(From),
   valid_position(To),
   piece_at_position(Board, (From, To), (PieceType, Color)),
-  legal_move(PieceType, (From, To)).
+  legal_move(PieceType, Board, (From, To)).
 
 replace_list_item(1,  [_|T], Item, [Item|T]).
 
 replace_list_item(Idx, [], _, _) :-
-  Idx > 1,
+  Idx #> 1,
   false.
 
 replace_list_item(
@@ -132,13 +134,15 @@ piece_set(OriginalBoard, (Rowno, Letter), Piece, PieceSetBoard) :-
       Colno,
       OriginalBoard,
       Piece,
-      PieceRemovedBoard
+      PieceSetBoard
   ).
 
 updated_board(OriginalBoard, From, To, NewBoard) :-
   piece_removed(OriginalBoard, From, PieceRemovedBoard),
   piece_at_position(OriginalBoard, Piece),
   piece_set(To, Piece, PieceRemovedBoard, NewBoard).
+
+
 
   % probably a good idea to mark the update as a capture
   % maybe I should put it on the calling predicate
@@ -151,3 +155,4 @@ updated_board(OriginalBoard, From, To, NewBoard) :-
 % for a move get the piece that was captured
 % define promotion
 % define castling
+% define knight movement
