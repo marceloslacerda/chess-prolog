@@ -1,8 +1,19 @@
 :- use_module(library(lists)).
 :- use_module(library("clpfd")).
 
-position_row((Row, _), Row).
-position_leter((_, Letter), Letter).
+valid_row(Row) :-
+    Row #< 9,
+    Row #> 1.
+
+valid_letter(Letter) :-
+  member(Letter, "ABCDEFGH").
+    
+
+position_row((Row, _), Row) :-
+  valid_row(Row).
+
+position_leter((_, Letter), Letter) :-
+  valid_letter(Letter).
 
 colorwards_movement(black, (Previous, Next)) :-
   position_row(Previous, N1),
@@ -16,15 +27,16 @@ colorwards_movement(white, (Previous, Next)) :-
   N1 #> N2.
 
 
-vertical_movement(Movement) :- 
-  colorwards_movement(black, Movement);
-  colorwards_movement(white, Movement).
+vertical_movement((Previous, Next)) :- 
+  position_row(Previous, N1),
+  position_row(Previous, N2),
+  N1 #\= N2.
 
 
 sideways_movement((Previous, Next)) :-
   position_leter(Previous, L1),
   position_leter(Next, L2),
-  L1 #\= L2.
+  L1 \= L2.
 
 
 diagonal_movement(Movement) :-
@@ -66,6 +78,11 @@ legal_move(tower, _, Movement) :-
 legal_move(queen, _, Movement) :-
   legal_move(tower, _, Movement);
   legal_move(bishop, _, Movement).
+
+% define knight movement
+
+legal_move(knight, _, Movement):-
+    false.
 
 % define castling
 
@@ -155,4 +172,4 @@ updated_board(OriginalBoard, From, To, NewBoard) :-
 % for a move get the piece that was captured
 % define promotion
 % define castling
-% define knight movement
+
