@@ -1,47 +1,58 @@
 :- use_module(library(lists)).
-:- use_module(library("clpfd")).
+:- use_module(library(clpfd)).
+
 
 valid_row(Row) :-
     Row #< 9,
     Row #> 1.
 
+letters([a, b, c, d, f, g, h]).
+
 valid_letter(Letter) :-
-  member(Letter, "ABCDEFGH").
-    
+  letters(Letters),
+  member(Letter, Letters).
 
-position_row((Row, _), Row) :-
-  valid_row(Row).
 
-position_leter((_, Letter), Letter) :-
+position((Row, Letter), Row, Letter) :-
+  valid_row(Row),
   valid_letter(Letter).
 
+
 colorwards_movement(black, (Previous, Next)) :-
-  position_row(Previous, N1),
-  position_row(Next, N2),
+  position(Previous, N1, _),
+  position(Next, N2, _),
   N1 #< N2.
 
 
 colorwards_movement(white, (Previous, Next)) :-
-  position_row(Previous, N1),
-  position_row(Next, N2),
+  position(Previous, N1, _),
+  position(Next, N2, _),
   N1 #> N2.
 
 
 vertical_movement((Previous, Next)) :- 
-  position_row(Previous, N1),
-  position_row(Previous, N2),
-  N1 #\= N2.
+  colorwards_movement(_, (Previous, Next)).
 
 
 sideways_movement((Previous, Next)) :-
-  position_leter(Previous, L1),
-  position_leter(Next, L2),
+  position(Previous, _, L1),
+  position(Next, _, L2),
   L1 \= L2.
 
 
-diagonal_movement(Movement) :-
-  vertical_movement(Movement),
-  sideways_movement(Movement).
+letter_as_idx(Letter, Idx) :-
+  letters(Letters),
+  nth1(Idx, Letters, Letter).
+
+
+diagonal_movement((Previous, Next)) :-
+  position(Previous, R1, L1),
+  position(Next, R2, L2),
+  letter_as_idx(L1, Col1),
+  letter_as_idx(L2, Col2),
+  R1 #= R2 * Constant,
+  Col1 #= Col2 * Constant,
+  Constant #\= 1.
 
 
 opposite_color(black, white).
@@ -79,18 +90,32 @@ legal_move(queen, _, Movement) :-
   legal_move(tower, _, Movement);
   legal_move(bishop, _, Movement).
 
-% define knight movement
 
-legal_move(knight, _, Movement):-
-    false.
+legal_move(knight, _, (From, To)):-
+  position(From, R1, L1),
+  position(To, R2, L2),
+  letter_as_idx(L1, Col1),
+  letter_as_idx(L2, Col2),
+  2 #= abs(R1 - R2),
+  1 #= abs(Col1 - Col2).
 
-% define castling
+legal_move(king, _, (From, To)):-
+  position(From, R1, L1),
+  position(To, R2, L2),
+  letter_as_idx(L1, Col1),
+  letter_as_idx(L2, Col2),
+  DistV #= abs(R1 - R2),
+  DistH #= abs(Col1 - Col2),
+  DistV #< 2,
+  DistH #< 2,
+  0 #< DistV + DistH,
+  2 #> DistV + DistH.
+
+% define castling: castling is not a move from->to because two pieces are moved
+% so it's better to define it elsewhere other than legal_move
+% same for en-passant
 
 legal_move(nothing, _, _):- false.
-
-
-letter_as_idx(Letter, Idx) :-
-  nth1(Idx, "ABCDEFGH", Letter).
 
 
 piece_at_position(Board, (Number, Letter), Piece) :-
@@ -102,18 +127,13 @@ piece_at_position(Board, (Number, Letter), Piece) :-
 player_color(Board, Location, Color) :-
   piece_at_position(Board, Location, (_, Color)).
 
-
-valid_position((Number, Letter)) :-
-  Number #< 0,
-  Number #> 9,
-  member(Letter, "ABCDEFGH").
+capture_own_piece(Board, Movement) :-
 
 
-player_movement(Color, Board, From, To) :-
-  valid_position(From),
-  valid_position(To),
-  piece_at_position(Board, (From, To), (PieceType, Color)),
-  legal_move(PieceType, Board, (From, To)).
+standard_player_movement(Color, Board, (PieceType, Color), Movement) :-
+  piece_at_position(Board, Movement, (PieceType, Color)),
+  not(capture_own_piece(Color, Board, Movement)),
+  legal_move(PieceType, Board, Movement).
 
 replace_list_item(1,  [_|T], Item, [Item|T]).
 
@@ -156,20 +176,28 @@ piece_set(OriginalBoard, (Rowno, Letter), Piece, PieceSetBoard) :-
 
 updated_board(OriginalBoard, From, To, NewBoard) :-
   piece_removed(OriginalBoard, From, PieceRemovedBoard),
-  piece_at_position(OriginalBoard, Piece),
+  piece_at_position(OriginalBoard, From, Piece),
+  standard_player_movement(Color, Board, Piece, (From, To)),
   piece_set(To, Piece, PieceRemovedBoard, NewBoard).
 
+
+updated_board(OriginalBoard, From, To, NewBoard) :-
+  piece_at_position(OriginalBoard, From, (king, _)),
+  castling((From, To), OriginalBoard, NewBoard).
+
+updated_board(OriginalBoard, From, To, NewBoard) :-
+  piece_at_position(OriginalBoard, From, (pawn, _)),
+  en_passant(Color, (From, To), OriginalBoard, NewBoard).
 
 
   % probably a good idea to mark the update as a capture
   % maybe I should put it on the calling predicate
   
-% for a piece get possible moves
+% for a piece get possible moves legal_move, minus castling and en-passant
+% implement cant capture your own piece
 % for a piece get possible captures
 % for a piece get pieces that can capture it
 % for a player get check state
 % for a player get check mate state
 % for a move get the piece that was captured
-% define promotion
-% define castling
 
