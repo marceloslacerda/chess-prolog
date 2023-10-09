@@ -174,6 +174,7 @@ piece_set(OriginalBoard, (Rowno, Letter), Piece, PieceSetBoard) :-
       PieceSetBoard
   ).
 
+
 updated_board(OriginalBoard, From, To, NewBoard) :-
   piece_removed(OriginalBoard, From, PieceRemovedBoard),
   piece_at_position(OriginalBoard, From, Piece),
@@ -183,17 +184,15 @@ updated_board(OriginalBoard, From, To, NewBoard) :-
 
 updated_board(OriginalBoard, From, To, NewBoard) :-
   piece_at_position(OriginalBoard, From, (king, _)),
-  castling((From, To), OriginalBoard, NewBoard).
-
-updated_board(OriginalBoard, From, To, NewBoard) :-
-  piece_at_position(OriginalBoard, From, (pawn, _)),
-  en_passant(Color, (From, To), OriginalBoard, NewBoard).
 
 
-  % probably a good idea to mark the update as a capture
-  % maybe I should put it on the calling predicate
-  
+% create updated_history predicate
+% maybe I should put it on the calling predicate
+
 % for a piece get possible moves legal_move, minus castling and en-passant
+% en-passant requires a predicate that has the history of the game as a variable
+% castling also requires the history since neither the rook nor the king must have been moved before
+% create caputred predicate
 % implement cant capture your own piece
 % for a piece get possible captures
 % for a piece get pieces that can capture it
