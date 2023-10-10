@@ -4,7 +4,7 @@
 
 valid_row(Row) :-
     Row #< 9,
-    Row #> 1.
+    Row #> 0.
 
 letters([a, b, c, d, f, g, h]).
 
@@ -127,12 +127,8 @@ piece_at_position(Board, (Number, Letter), Piece) :-
 player_color(Board, Location, Color) :-
   piece_at_position(Board, Location, (_, Color)).
 
-capture_own_piece(Board, Movement) :-
-
-
-standard_player_movement(Color, Board, (PieceType, Color), Movement) :-
+standard_player_movement(Board, (PieceType, Color), Movement) :-
   piece_at_position(Board, Movement, (PieceType, Color)),
-  not(capture_own_piece(Color, Board, Movement)),
   legal_move(PieceType, Board, Movement).
 
 replace_list_item(1,  [_|T], Item, [Item|T]).
@@ -177,13 +173,8 @@ piece_set(OriginalBoard, (Rowno, Letter), Piece, PieceSetBoard) :-
 
 updated_board(OriginalBoard, From, To, NewBoard) :-
   piece_removed(OriginalBoard, From, PieceRemovedBoard),
-  piece_at_position(OriginalBoard, From, Piece),
-  standard_player_movement(Color, Board, Piece, (From, To)),
+  standard_player_movement(OriginalBoard, Piece, (From, To)),
   piece_set(To, Piece, PieceRemovedBoard, NewBoard).
-
-
-updated_board(OriginalBoard, From, To, NewBoard) :-
-  piece_at_position(OriginalBoard, From, (king, _)),
 
 
 % create updated_history predicate
