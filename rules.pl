@@ -6,11 +6,8 @@ valid_row(Row) :-
     Row #< 9,
     Row #> 0.
 
-letters([a, b, c, d, f, g, h]).
-
 valid_letter(Letter) :-
-  letters(Letters),
-  member(Letter, Letters).
+  memberchk(Letter, [a, b, c, d, e, f, g, h]).
 
 
 position((Row, Letter), Row, Letter) :-
@@ -31,7 +28,9 @@ colorwards_movement(white, (Previous, Next)) :-
 
 
 vertical_movement((Previous, Next)) :- 
-  colorwards_movement(_, (Previous, Next)).
+  position(Previous, N1, _),
+  position(Next, N2, _),
+  N1 #\= N2.
 
 
 sideways_movement((Previous, Next)) :-
@@ -41,8 +40,7 @@ sideways_movement((Previous, Next)) :-
 
 
 letter_as_idx(Letter, Idx) :-
-  letters(Letters),
-  nth1(Idx, Letters, Letter).
+  nth1(Idx, [a, b, c, d, e, f, g, h], Letter).
 
 
 diagonal_movement((Previous, Next)) :-
@@ -50,10 +48,11 @@ diagonal_movement((Previous, Next)) :-
   position(Next, R2, L2),
   letter_as_idx(L1, Col1),
   letter_as_idx(L2, Col2),
-  R1 #= R2 * Constant,
-  Col1 #= Col2 * Constant,
-  Constant #\= 1.
+  is_diagonal(R1, Col1, R2, Col2).
 
+is_diagonal(X1, Y1, X2,  Y2):-
+  C #=  abs(X1 - X2),
+  C #=  abs(Y1 - Y2).
 
 opposite_color(black, white).
 
