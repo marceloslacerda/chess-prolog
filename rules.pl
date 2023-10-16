@@ -38,9 +38,12 @@ sideways_movement((Previous, Next)) :-
   position(Next, _, L2),
   L1 \= L2.
 
+% Matches the first Index of X on List starting from 1
+first_index(Index, List, X):- 
+    once(nth1(Index, List, X)).
 
 letter_as_idx(Letter, Idx) :-
-  nth1(Idx, [a, b, c, d, e, f, g, h], Letter).
+  first_index(Idx, [a, b, c, d, e, f, g, h], Letter).
 
 
 diagonal_movement((Previous, Next)) :-
@@ -50,13 +53,22 @@ diagonal_movement((Previous, Next)) :-
   letter_as_idx(L2, Col2),
   is_diagonal(R1, Col1, R2, Col2).
 
+
 is_diagonal(X1, Y1, X2,  Y2):-
-  C #=  abs(X1 - X2),
-  C #=  abs(Y1 - Y2).
+  C #= abs(X1 - X2),
+  C #= abs(Y1 - Y2),
+  C #> 1.
+
 
 opposite_color(black, white).
 
 opposite_color(white, black).
+
+
+piece_at_position(Board, (Number, Letter), Piece) :-
+  first_index(Number, Board, Row),
+  letter_as_idx(Letter, Lidx),
+  first_index(Lidx, Row, Piece).
 
 
 enemywise_movement(Board, (From, To)) :-
@@ -115,12 +127,6 @@ legal_move(king, _, (From, To)):-
 % same for en-passant
 
 legal_move(nothing, _, _):- false.
-
-
-piece_at_position(Board, (Number, Letter), Piece) :-
-  nth1(Number, Board, Row),
-  letter_as_idx(Letter, Lidx),
-  nth1(Lidx, Row, Piece).
 
 
 player_color(Board, Location, Color) :-

@@ -16,8 +16,8 @@ test(valid_letter) :-
 test(position):-
     position((1, a), 1, a),
     not(position((1, a), 2, a)),
-    not(position((0, 1), 0, 1)),
-    not(position((3, z), 3, z)).
+    not(position((0, _), 0, _)),
+    not(position((_, z), _, z)).
 
 test(colorwards_movement):-
     colorwards_movement(black, ((1, _), (2, _))),
@@ -41,12 +41,19 @@ test(sideways_movement):-
 test(letter_as_idx):-
     letter_as_idx(a, 1),
     letter_as_idx(b, 2),
-    \+ letter_as_idx(z, 2).
+    \+ letter_as_idx(z, _).
 
 test(diagonal_movement):-
     diagonal_movement(((1, a), (4, d))),
     diagonal_movement(((6, h), (1, c))),
     diagonal_movement(((1, h), (8, a))),
     \+ diagonal_movement(((1, a), (3, b))).
+
+test(enemywise_movement):-
+    enemywise_movement([[(_, white)]], ((1, _), (2, _)))%,
+    %enemywise_movement([empty, [(_, black)]], ((2, _), (1, _))),
+    %\+ enemywise_movement([[(_, black)]], ((1, _), (2, _))),
+    %\+ enemywise_movement([empty, [(_, white)]], ((2, _), (1, _)))
+    .
 
 :- end_tests(rules).
