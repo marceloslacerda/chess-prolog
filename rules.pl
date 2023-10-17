@@ -7,13 +7,11 @@ valid_row(Row) :-
     Row #> 0.
 
 valid_letter(Letter) :-
-  memberchk(Letter, [a, b, c, d, e, f, g, h]).
-
+  member(Letter, [a, b, c, d, e, f, g, h]).
 
 position((Row, Letter), Row, Letter) :-
   valid_row(Row),
   valid_letter(Letter).
-
 
 colorwards_movement(black, (Previous, Next)) :-
   position(Previous, N1, _),
@@ -38,12 +36,8 @@ sideways_movement((Previous, Next)) :-
   position(Next, _, L2),
   L1 \= L2.
 
-% Matches the first Index of X on List starting from 1
-first_index(Index, List, X):- 
-    once(nth1(Index, List, X)).
-
 letter_as_idx(Letter, Idx) :-
-  first_index(Idx, [a, b, c, d, e, f, g, h], Letter).
+  nth1(Idx, [a, b, c, d, e, f, g, h], Letter).
 
 
 diagonal_movement((Previous, Next)) :-
@@ -66,25 +60,25 @@ opposite_color(white, black).
 
 
 piece_at_position(Board, (Number, Letter), Piece) :-
-  first_index(Number, Board, Row),
+  nth1(Number, Board, Row),
   letter_as_idx(Letter, Lidx),
-  first_index(Lidx, Row, Piece).
+  nth1(Lidx, Row, Piece).
 
+player_color(Board, Location, Color) :-
+  piece_at_position(Board, Location, (_, Color)).
 
 enemywise_movement(Board, (From, To)) :-
   opposite_color(PieceColor, EnemyColor),
-  piece_at_position(Board, From, (_, PieceColor)),
   player_color(Board, From, PieceColor),
-  colorwards_movement(EnemyColor, To).
+  colorwards_movement(EnemyColor, (From, To)).
 
+vertical_distance(((FromRow, _), (ToRow, _)), Distance):-
+  Distance #= abs(FromRow - ToRow).
 
 legal_move(pawn, Board, Movement) :-
-  diagonal_movement(Movement),
-  enemywise_movement(Board, Movement).
-
-legal_move(pawn, Board, Movement):-
   enemywise_movement(Board, Movement),
-  not(diagonal_movement(Movement)).
+  not(sideways_movement(Movement)),
+  vertical_distance(Movement, 1).
 
 legal_move(bishop, _, Movement) :-
   diagonal_movement(Movement).
@@ -128,9 +122,6 @@ legal_move(king, _, (From, To)):-
 
 legal_move(nothing, _, _):- false.
 
-
-player_color(Board, Location, Color) :-
-  piece_at_position(Board, Location, (_, Color)).
 
 standard_player_movement(Board, (PieceType, Color), Movement) :-
   piece_at_position(Board, Movement, (PieceType, Color)),

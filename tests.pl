@@ -49,11 +49,21 @@ test(diagonal_movement):-
     diagonal_movement(((1, h), (8, a))),
     \+ diagonal_movement(((1, a), (3, b))).
 
+test(piece_at_position):-
+    piece_at_position([[mypiece]], (1, a), mypiece),
+    piece_at_position([[nothing, mypiece]], (1, b), mypiece),
+    piece_at_position([nothing, [mypiece]], (2, a), mypiece),
+    \+ piece_at_position([[nothing], [mypiece]], (1, a), mypiece).
+
 test(enemywise_movement):-
-    enemywise_movement([[(_, white)]], ((1, _), (2, _)))%,
-    %enemywise_movement([empty, [(_, black)]], ((2, _), (1, _))),
-    %\+ enemywise_movement([[(_, black)]], ((1, _), (2, _))),
-    %\+ enemywise_movement([empty, [(_, white)]], ((2, _), (1, _)))
-    .
+    enemywise_movement([[(_, white)], [nothing]], ((1, _), (2, _))),
+    enemywise_movement([empty, [(_, black)]], ((2, _), (1, _))),
+    \+ enemywise_movement([[(_, black)]], ((1, _), (2, _))),
+    \+ enemywise_movement([empty, [(_, white)]], ((2, _), (1, _))).
+
+test(legal_move_pawn):-
+    legal_move(pawn, [[(pawn, white)], [nothing]], ((1, a), (2, a))),
+    \+ legal_move(pawn, [[(pawn, white)], [nothing]], ((1, a), (3, a))),
+    \+ legal_move(pawn, [[(pawn, white)], [nothing]], ((1, a), (2, b))).
 
 :- end_tests(rules).
