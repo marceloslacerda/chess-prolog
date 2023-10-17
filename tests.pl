@@ -66,4 +66,33 @@ test(legal_move_pawn):-
     \+ legal_move(pawn, [[(pawn, white)], [nothing]], ((1, a), (3, a))),
     \+ legal_move(pawn, [[(pawn, white)], [nothing]], ((1, a), (2, b))).
 
+test(legal_move_bishop):-
+    legal_move(bishop, _, ((1, a), (3, c))),
+    legal_move(bishop, _, ((3, c), (1, a))),
+    legal_move(bishop, _, ((4, h), (1, e))),
+    legal_move(bishop, _, ((1, e), (4, h))),
+    \+ legal_move(bishop, _, ((1, a), (3, b))),
+    \+ legal_move(bishop, _, ((1, a), (2, a))),
+    \+ legal_move(bishop, _, ((1, a), (1, b))).
+
+test(legal_move_tower):-
+    legal_move(tower, _, ((1, a), (1, c))),
+    legal_move(tower, _, ((1, c), (1, a))),
+    legal_move(tower, _, ((1, a), (3, a))),
+    legal_move(tower, _, ((3, a), (1, a))),
+    \+ legal_move(tower, _, ((4, h), (1, e))),
+    \+ legal_move(tower, _, ((1, e), (4, h))).
+
+test(legal_move_queen):-
+    legal_move(queen, _, ((1, a), (1, c))),
+    legal_move(queen, _, ((1, c), (1, a))),
+    legal_move(queen, _, ((1, a), (3, a))),
+    legal_move(queen, _, ((3, a), (1, a))),
+    legal_move(queen, _, ((1, a), (3, c))),
+    legal_move(queen, _, ((3, c), (1, a))),
+    legal_move(queen, _, ((4, h), (1, e))),
+    legal_move(queen, _, ((1, e), (4, h))),
+    \+ legal_move(queen, _, ((1, a), (3, b))).
+
+
 :- end_tests(rules).
