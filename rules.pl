@@ -75,36 +75,44 @@ enemywise_movement(Board, (From, To)) :-
 vertical_distance(((FromRow, _), (ToRow, _)), Distance):-
   Distance #= abs(FromRow - ToRow).
 
-legal_move(pawn, Board, Movement) :-
+simple_pawn_movement(Board, Movement) :-
   enemywise_movement(Board, Movement),
   not(sideways_movement(Movement)),
   vertical_distance(Movement, 1).
 
-legal_move(bishop, _, Movement) :-
+bishop_movement(Movement) :-
   diagonal_movement(Movement).
 
-legal_move(tower, _, Movement) :-
+rook_movement(Movement) :-
   vertical_movement(Movement),
-  not(diagonal_movement(Movement)).
+  not(sideways_movement(Movement)).
 
-legal_move(tower, _, Movement) :-
+rook_movement(Movement) :-
   sideways_movement(Movement),
-  not(diagonal_movement(Movement)).
+  not(vertical_movement(Movement)).
 
-legal_move(queen, _, Movement) :-
-  legal_move(tower, _, Movement);
-  legal_move(bishop, _, Movement).
+queen_movement(Movement) :-
+  rook_movement(Movement);
+  bishop_movement(Movement).
 
 
-legal_move(knight, _, (From, To)):-
+knight_movement((From, To)):-
   position(From, R1, L1),
   position(To, R2, L2),
   letter_as_idx(L1, Col1),
   letter_as_idx(L2, Col2),
-  2 #= abs(R1 - R2),
-  1 #= abs(Col1 - Col2).
+  (
+    (
+      2 #= abs(R1 - R2),
+      1 #= abs(Col1 - Col2)
+    );
+    (
+      1 #= abs(R1 - R2),
+      2 #= abs(Col1 - Col2)
+    )
+  ).
 
-legal_move(king, _, (From, To)):-
+king_movement((From, To)):-
   position(From, R1, L1),
   position(To, R2, L2),
   letter_as_idx(L1, Col1),
@@ -114,14 +122,22 @@ legal_move(king, _, (From, To)):-
   DistV #< 2,
   DistH #< 2,
   0 #< DistV + DistH,
-  2 #> DistV + DistH.
+  3 #> DistV + DistH.
+
+historyless_boardless_movement(Movement):-
+  king_movement(Movement)
+  ; knight_movement(Movement)
+  ; bishop_movement(Movement)
+  ; queen_movement(Movement)
+  ; rook_movement(Movement).
+
+historyless_movement(Board, Movement):-
+  simple_pawn_movement(Board, Movement)
+  ; historyless_boardless_movement(Movement).
 
 % define castling: castling is not a move from->to because two pieces are moved
 % so it's better to define it elsewhere other than legal_move
 % same for en-passant
-
-legal_move(nothing, _, _):- false.
-
 
 standard_player_movement(Board, (PieceType, Color), Movement) :-
   piece_at_position(Board, Movement, (PieceType, Color)),

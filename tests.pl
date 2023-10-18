@@ -81,7 +81,8 @@ test(legal_move_tower):-
     legal_move(tower, _, ((1, a), (3, a))),
     legal_move(tower, _, ((3, a), (1, a))),
     \+ legal_move(tower, _, ((4, h), (1, e))),
-    \+ legal_move(tower, _, ((1, e), (4, h))).
+    \+ legal_move(tower, _, ((1, e), (4, h))),
+    \+ legal_move(tower, _, ((1, a), (3, b))).
 
 test(legal_move_queen):-
     legal_move(queen, _, ((1, a), (1, c))),
@@ -94,5 +95,26 @@ test(legal_move_queen):-
     legal_move(queen, _, ((1, e), (4, h))),
     \+ legal_move(queen, _, ((1, a), (3, b))).
 
+test(legal_move_knight):-
+    legal_move(knight, _, ((1, a), (3, b))),
+    legal_move(knight, _, ((1, b), (3, a))),
+    legal_move(knight, _, ((1, a), (2, c))),
+    legal_move(knight, _, ((1, a), (2, c))),
+    legal_move(knight, _, ((2, a), (1, c))),
+    \+ legal_move(knight, _, ((1, a), (1, c))),
+    \+ legal_move(knight, _, ((3, a), (1, a))),
+    \+ legal_move(knight, _, ((1, a), (3, c))),
+    \+ legal_move(knight, _, ((3, c), (1, a))).
+
+
+test(legal_move_king):-
+    legal_move(king, _, ((2, b), (1, a))),
+    legal_move(king, _, ((2, b), (1, b))),
+    legal_move(king, _, ((2, b), (2, a))),
+    legal_move(king, _, ((2, b), (3, a))),
+    legal_move(king, _, ((2, b), (3, b))),
+    legal_move(king, _, ((2, b), (3, c))),
+    legal_move(king, _, ((2, b), (2, c))),
+    \+ legal_move(king, _, ((2, b), (4, b))).
 
 :- end_tests(rules).
