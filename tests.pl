@@ -61,60 +61,60 @@ test(enemywise_movement):-
     \+ enemywise_movement([[(_, black)]], ((1, _), (2, _))),
     \+ enemywise_movement([empty, [(_, white)]], ((2, _), (1, _))).
 
-test(legal_move_pawn):-
-    legal_move(pawn, [[(pawn, white)], [nothing]], ((1, a), (2, a))),
-    \+ legal_move(pawn, [[(pawn, white)], [nothing]], ((1, a), (3, a))),
-    \+ legal_move(pawn, [[(pawn, white)], [nothing]], ((1, a), (2, b))).
+test(simple_pawn_movement):-
+    simple_pawn_movement([[(pawn, white)], [nothing]], ((1, a), (2, a))),
+    \+ simple_pawn_movement([[(pawn, white)], [nothing]], ((1, a), (3, a))),
+    \+ simple_pawn_movement([[(pawn, white)], [nothing]], ((1, a), (2, b))).
 
-test(legal_move_bishop):-
-    legal_move(bishop, _, ((1, a), (3, c))),
-    legal_move(bishop, _, ((3, c), (1, a))),
-    legal_move(bishop, _, ((4, h), (1, e))),
-    legal_move(bishop, _, ((1, e), (4, h))),
-    \+ legal_move(bishop, _, ((1, a), (3, b))),
-    \+ legal_move(bishop, _, ((1, a), (2, a))),
-    \+ legal_move(bishop, _, ((1, a), (1, b))).
+test(bishop_movement):-
+    bishop_movement(((1, a), (3, c))),
+    bishop_movement(((3, c), (1, a))),
+    bishop_movement(((4, h), (1, e))),
+    bishop_movement(((1, e), (4, h))),
+    \+ bishop_movement(((1, a), (3, b))),
+    \+ bishop_movement(((1, a), (2, a))),
+    \+ bishop_movement(((1, a), (1, b))).
 
-test(legal_move_tower):-
-    legal_move(tower, _, ((1, a), (1, c))),
-    legal_move(tower, _, ((1, c), (1, a))),
-    legal_move(tower, _, ((1, a), (3, a))),
-    legal_move(tower, _, ((3, a), (1, a))),
-    \+ legal_move(tower, _, ((4, h), (1, e))),
-    \+ legal_move(tower, _, ((1, e), (4, h))),
-    \+ legal_move(tower, _, ((1, a), (3, b))).
+test(rook_movement):-
+    rook_movement(((1, a), (1, c))),
+    rook_movement(((1, c), (1, a))),
+    rook_movement(((1, a), (3, a))),
+    rook_movement(((3, a), (1, a))),
+    \+ rook_movement(((4, h), (1, e))),
+    \+ rook_movement(((1, e), (4, h))),
+    \+ rook_movement(((1, a), (3, b))).
 
-test(legal_move_queen):-
-    legal_move(queen, _, ((1, a), (1, c))),
-    legal_move(queen, _, ((1, c), (1, a))),
-    legal_move(queen, _, ((1, a), (3, a))),
-    legal_move(queen, _, ((3, a), (1, a))),
-    legal_move(queen, _, ((1, a), (3, c))),
-    legal_move(queen, _, ((3, c), (1, a))),
-    legal_move(queen, _, ((4, h), (1, e))),
-    legal_move(queen, _, ((1, e), (4, h))),
-    \+ legal_move(queen, _, ((1, a), (3, b))).
+test(queen_movement):-
+    queen_movement(((1, a), (1, c))),
+    queen_movement(((1, c), (1, a))),
+    queen_movement(((1, a), (3, a))),
+    queen_movement(((3, a), (1, a))),
+    queen_movement(((1, a), (3, c))),
+    queen_movement(((3, c), (1, a))),
+    queen_movement(((4, h), (1, e))),
+    queen_movement(((1, e), (4, h))),
+    \+ queen_movement(((1, a), (3, b))).
 
-test(legal_move_knight):-
-    legal_move(knight, _, ((1, a), (3, b))),
-    legal_move(knight, _, ((1, b), (3, a))),
-    legal_move(knight, _, ((1, a), (2, c))),
-    legal_move(knight, _, ((1, a), (2, c))),
-    legal_move(knight, _, ((2, a), (1, c))),
-    \+ legal_move(knight, _, ((1, a), (1, c))),
-    \+ legal_move(knight, _, ((3, a), (1, a))),
-    \+ legal_move(knight, _, ((1, a), (3, c))),
-    \+ legal_move(knight, _, ((3, c), (1, a))).
+test(knight_movement):-
+    knight_movement(((1, a), (3, b))),
+    knight_movement(((1, b), (3, a))),
+    knight_movement(((1, a), (2, c))),
+    knight_movement(((1, a), (2, c))),
+    knight_movement(((2, a), (1, c))),
+    \+ knight_movement(((1, a), (1, c))),
+    \+ knight_movement(((3, a), (1, a))),
+    \+ knight_movement(((1, a), (3, c))),
+    \+ knight_movement(((3, c), (1, a))).
 
 
-test(legal_move_king):-
-    legal_move(king, _, ((2, b), (1, a))),
-    legal_move(king, _, ((2, b), (1, b))),
-    legal_move(king, _, ((2, b), (2, a))),
-    legal_move(king, _, ((2, b), (3, a))),
-    legal_move(king, _, ((2, b), (3, b))),
-    legal_move(king, _, ((2, b), (3, c))),
-    legal_move(king, _, ((2, b), (2, c))),
-    \+ legal_move(king, _, ((2, b), (4, b))).
+test(king_movement):-
+    king_movement(((2, b), (1, a))),
+    king_movement(((2, b), (1, b))),
+    king_movement(((2, b), (2, a))),
+    king_movement(((2, b), (3, a))),
+    king_movement(((2, b), (3, b))),
+    king_movement(((2, b), (3, c))),
+    king_movement(((2, b), (2, c))),
+    \+ king_movement(((2, b), (4, b))).
 
 :- end_tests(rules).

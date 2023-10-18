@@ -9,6 +9,15 @@ valid_row(Row) :-
 valid_letter(Letter) :-
   member(Letter, [a, b, c, d, e, f, g, h]).
 
+
+valid_piece(king).
+valid_piece(queen).
+valid_piece(rook).
+valid_piece(bishop).
+valid_piece(knight).
+valid_piece(pawn).
+
+
 position((Row, Letter), Row, Letter) :-
   valid_row(Row),
   valid_letter(Letter).
@@ -59,10 +68,11 @@ opposite_color(black, white).
 opposite_color(white, black).
 
 
-piece_at_position(Board, (Number, Letter), Piece) :-
+piece_at_position(Board, (Number, Letter), (PieceType, PieceColor)) :-
   nth1(Number, Board, Row),
   letter_as_idx(Letter, Lidx),
-  nth1(Lidx, Row, Piece).
+  nth1(Lidx, Row, (PieceType, PieceColor)),
+  valid_piece(PieceType).
 
 player_color(Board, Location, Color) :-
   piece_at_position(Board, Location, (_, Color)).
@@ -124,22 +134,59 @@ king_movement((From, To)):-
   0 #< DistV + DistH,
   3 #> DistV + DistH.
 
-historyless_boardless_movement(Movement):-
-  king_movement(Movement)
-  ; knight_movement(Movement)
-  ; bishop_movement(Movement)
-  ; queen_movement(Movement)
-  ; rook_movement(Movement).
+historyless_movement(Board, (From, _)):-
+  piece_at_position(Board, From, (king, _)),
+  king_movement(Movement).
+
+historyless_movement(Board, (From, _)):-
+  piece_at_position(Board, From, (knight, _)),
+  knight_movement(Movement).
+
+historyless_movement(Board, (From, _)):-
+  piece_at_position(Board, From, (bishop, _)),
+  bishop_movement(Movement).
+
+historyless_movement(Board, (From, _)):-
+  piece_at_position(Board, From, (queen, _)),
+  queen_movement(Movement).
+
+historyless_movement(Board, (From, _)):-
+  piece_at_position(Board, From, (rook, _)),
+  rook_movement(Movement).
 
 historyless_movement(Board, Movement):-
-  simple_pawn_movement(Board, Movement)
-  ; historyless_boardless_movement(Movement).
+  piece_at_position(Board, From, (pawn, _)),
+  simple_pawn_movement(Board, Movement).
+
+
+historyless_capture(Board, (From, To), Captured):-
+  piece_at_position(Board, From, (_, CapturerColor)),
+  piece_at_position(Board, To, (Captured, CapturedColor)),
+  opposite_color(CapturedColor, CapturerColor).
+
+simple_pawn_capture_movement(Board, Movement):-
+  enemywise_movement(Board, Movement),
+  diagonal_movement(Movement),
+  vertical_distance(Movement, 1).
+
+historyless_action(Board, Movement, Captured):-
+  historyless_movement(Board, Movement),
+  historyless_capture(Board, Movement, Captured).
+
+historyless_action(Board, Movement, Captured):-
+  simple_pawn_capture_movement(Board, Movement),
+  historyless_capture(Board, Movement, Captured).
+
+historyless_action(Board, Movement, nothing):-
+  historyless_movement(Board, Movement).
+
+% todo historied actions
 
 % define castling: castling is not a move from->to because two pieces are moved
 % so it's better to define it elsewhere other than legal_move
 % same for en-passant
 
-standard_player_movement(Board, (PieceType, Color), Movement) :-
+/*standard_player_movement(Board, (PieceType, Color), Movement) :-
   piece_at_position(Board, Movement, (PieceType, Color)),
   legal_move(PieceType, Board, Movement).
 
@@ -203,3 +250,4 @@ updated_board(OriginalBoard, From, To, NewBoard) :-
 % for a player get check mate state
 % for a move get the piece that was captured
 
+*/
