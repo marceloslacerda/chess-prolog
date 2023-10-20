@@ -117,4 +117,19 @@ test(king_movement):-
     king_movement(((2, b), (2, c))),
     \+ king_movement(((2, b), (4, b))).
 
+test(historyless_movement):-
+    historyless_movement([[(pawn, white)]], ((1, a), (2, a))),
+    \+ historyless_movement([[(pawn, white)], [nothing]], ((1, a), (2, b))),
+    historyless_movement([[(bishop, white)]], ((1, a), (3, c))),
+    \+ historyless_movement([[(bishop, white)]], ((1, a), (3, b))),
+    historyless_movement([[(rook, white)]], ((1, a), (1, c))),
+    \+ historyless_movement([[(rook, white)]], ((1, a), (3, c))),
+    historyless_movement([[(queen, white)]], ((1, a), (1, c))),
+    \+ historyless_movement([[(queen, white)]], ((1, a), (3, b))),
+    historyless_movement([[(knight, white)]], ((1, a), (3, b))),
+    \+ historyless_movement([[(knight, white)]], ((1, a), (1, c))),
+    historyless_movement([[(king, white)]], ((1, a), (2, b))),
+    \+ historyless_movement([[(king, white)]], ((1, a), (1, c))),
+    true.
+
 :- end_tests(rules).

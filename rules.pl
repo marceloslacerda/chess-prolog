@@ -134,27 +134,33 @@ king_movement((From, To)):-
   0 #< DistV + DistH,
   3 #> DistV + DistH.
 
-historyless_movement(Board, (From, _)):-
+historyless_movement(Board, Movement):-
+  Movement=(From, _),
   piece_at_position(Board, From, (king, _)),
   king_movement(Movement).
 
-historyless_movement(Board, (From, _)):-
+historyless_movement(Board, Movement):-
+  Movement=(From, _),
   piece_at_position(Board, From, (knight, _)),
   knight_movement(Movement).
 
-historyless_movement(Board, (From, _)):-
+historyless_movement(Board, Movement):-
+  Movement=(From, _),
   piece_at_position(Board, From, (bishop, _)),
   bishop_movement(Movement).
 
-historyless_movement(Board, (From, _)):-
+historyless_movement(Board, Movement):-
+  Movement=(From, _),
   piece_at_position(Board, From, (queen, _)),
   queen_movement(Movement).
 
-historyless_movement(Board, (From, _)):-
+historyless_movement(Board, Movement):-
+  Movement=(From, _),
   piece_at_position(Board, From, (rook, _)),
   rook_movement(Movement).
 
 historyless_movement(Board, Movement):-
+  Movement=(From, _),
   piece_at_position(Board, From, (pawn, _)),
   simple_pawn_movement(Board, Movement).
 
