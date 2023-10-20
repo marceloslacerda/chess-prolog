@@ -9,6 +9,9 @@ valid_row(Row) :-
 valid_letter(Letter) :-
   member(Letter, [a, b, c, d, e, f, g, h]).
 
+position(Row, Letter):-
+  valid_row(Row),
+  valid_letter(Letter).
 
 valid_piece(king).
 valid_piece(queen).
@@ -17,41 +20,49 @@ valid_piece(bishop).
 valid_piece(knight).
 valid_piece(pawn).
 
+square_contents(nothing).
 
-position((Row, Letter), Row, Letter) :-
-  valid_row(Row),
-  valid_letter(Letter).
+valid_color(white).
+valid_color(black).
 
-colorwards_movement(black, (Previous, Next)) :-
-  position(Previous, N1, _),
-  position(Next, N2, _),
+square_contents(Piece, Color):-
+  valid_piece(Piece),
+  valid_color(Color).
+
+movement(From, To):-
+  From=position(_, _),
+  To=position(_, _).
+
+colorwards_movement(black, movement(Previous, Next)) :-
+  Previous=position(N1, _),
+  Next=position(N2, _),
   N1 #< N2.
 
 
-colorwards_movement(white, (Previous, Next)) :-
-  position(Previous, N1, _),
-  position(Next, N2, _),
+colorwards_movement(white, movement(Previous, Next)) :-
+  Previous=position(N1, _),
+  Next=position(N2, _),
   N1 #> N2.
 
 
-vertical_movement((Previous, Next)) :- 
-  position(Previous, N1, _),
-  position(Next, N2, _),
+vertical_movement(movement(Previous, Next)) :- 
+  Previous=position(N1, _),
+  Next=position(N2, _),
   N1 #\= N2.
 
 
-sideways_movement((Previous, Next)) :-
-  position(Previous, _, L1),
-  position(Next, _, L2),
+sideways_movement(movement(Previous, Next)) :-
+  Previous=position(_, L1),
+  Next=position(_, L2),
   L1 \= L2.
 
 letter_as_idx(Letter, Idx) :-
   nth1(Idx, [a, b, c, d, e, f, g, h], Letter).
 
 
-diagonal_movement((Previous, Next)) :-
-  position(Previous, R1, L1),
-  position(Next, R2, L2),
+diagonal_movement(movement(Previous, Next)) :-
+  Previous=position(R1, L1),
+  Next=position(R2, L2),
   letter_as_idx(L1, Col1),
   letter_as_idx(L2, Col2),
   is_diagonal(R1, Col1, R2, Col2).
@@ -68,14 +79,13 @@ opposite_color(black, white).
 opposite_color(white, black).
 
 
-piece_at_position(Board, (Number, Letter), (PieceType, PieceColor)) :-
+piece_at_position(Board, position(Number, Letter), square_contents(PieceType, PieceColor)) :-
   nth1(Number, Board, Row),
   letter_as_idx(Letter, Lidx),
-  nth1(Lidx, Row, (PieceType, PieceColor)),
-  valid_piece(PieceType).
+  nth1(Lidx, Row, square_contents(PieceType, PieceColor)).
 
 player_color(Board, Location, Color) :-
-  piece_at_position(Board, Location, (_, Color)).
+  piece_at_position(Board, Location, square_contents(_, Color)).
 
 enemywise_movement(Board, (From, To)) :-
   opposite_color(PieceColor, EnemyColor),
