@@ -63,9 +63,7 @@ test(piece_at_position):-
     piece_at_position([
             [square_contents(nothing)],
             [square_contents(white, pawn)]
-          ], position(1, a), square_contents(nothing)).
-
-test(not_piece_at_position):-
+          ], position(1, a), square_contents(nothing)),
     \+ piece_at_position([
         [square_contents(nothing)],
         [square_contents(white, pawn)]

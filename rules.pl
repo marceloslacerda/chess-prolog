@@ -20,10 +20,11 @@ valid_piece(bishop).
 valid_piece(knight).
 valid_piece(pawn).
 
-square_contents(nothing).
-
 valid_color(white).
 valid_color(black).
+
+
+square_contents(nothing).
 
 square_contents(Piece, Color):-
   valid_piece(Piece),
@@ -79,10 +80,14 @@ opposite_color(black, white).
 opposite_color(white, black).
 
 
-piece_at_position(Board, position(Number, Letter), square_contents(PieceType, PieceColor)) :-
+piece_at_position(Board, position(Number, Letter), Piece) :-
+  (
+    Piece = square_contents(_, _);
+    Piece = square_contents(nothing)
+  ),
   nth1(Number, Board, Row),
   letter_as_idx(Letter, Lidx),
-  nth1(Lidx, Row, square_contents(PieceType, PieceColor)).
+  nth1(Lidx, Row, Piece).
 
 player_color(Board, Location, Color) :-
   piece_at_position(Board, Location, square_contents(_, Color)).
