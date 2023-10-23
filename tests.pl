@@ -51,23 +51,25 @@ test(diagonal_movement):-
 test(piece_at_position):-
     piece_at_position([[
           square_contents(white, pawn)
-        ]], (1, a), square_contents(white, pawn)),
+        ]], position(1, a), square_contents(white, pawn)),
     piece_at_position([[
           square_contents(nothing),
           square_contents(white, pawn)
-        ]], (1, b), square_contents(white, pawn)),
+        ]], position(1, b), square_contents(white, pawn)),
     piece_at_position([
           [square_contents(nothing)],
           [square_contents(white, pawn)]
-        ], (2, a), square_contents(white, pawn)),
+        ], position(2, a), square_contents(white, pawn)),
     piece_at_position([
             [square_contents(nothing)],
             [square_contents(white, pawn)]
-          ], (1, a), square_contents(nothing)).
+          ], position(1, a), square_contents(nothing)).
+
+test(not_piece_at_position):-
     \+ piece_at_position([
-          [square_contents(nothing)],
-          [square_contents(white, pawn)]
-        ], (1, a), square_contents(white, pawn)).
+        [square_contents(nothing)],
+        [square_contents(white, pawn)]
+      ], position(1, a), square_contents(white, pawn)).
 
 test(enemywise_movement):-
     enemywise_movement([[(_, white)], [nothing]], ((1, _), (2, _))),
