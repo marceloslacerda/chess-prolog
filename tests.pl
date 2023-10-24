@@ -70,6 +70,12 @@ test(piece_at_position):-
       ], position(1, a), square_contents(white, pawn)).
 
 
+test(vertical_distance):-
+    vertical_distance(movement(position(1, _), position(2, _)), 1),
+    vertical_distance(movement(position(1, _), position(6, _)), 5),
+    vertical_distance(movement(position(7, _), position(2, _)), 5),
+    \+ vertical_distance(movement(position(7, _), position(2, _)), 4).
+
 test(player_color):-
     player_color([[square_contents(white, _)]], position(1, a), white).
 

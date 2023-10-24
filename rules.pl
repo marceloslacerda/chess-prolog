@@ -99,7 +99,7 @@ enemywise_movement(Board, movement(From, To)) :-
   opposite_color(PieceColor, EnemyColor),
   colorwards_movement(EnemyColor, movement(From, To)).
 
-vertical_distance(((FromRow, _), (ToRow, _)), Distance):-
+vertical_distance(movement(position(FromRow, _), position(ToRow, _)), Distance):-
   Distance #= abs(FromRow - ToRow).
 
 simple_pawn_movement(Board, Movement) :-
@@ -160,33 +160,33 @@ historyless_movement(Board, Movement):-
 
 historyless_movement(Board, Movement):-
   Movement=movement(From, _),
-  piece_at_position(Board, From, square_contents(knight, _)),
+  piece_at_position(Board, From, square_contents(_, knight)),
   knight_movement(Movement).
 
 historyless_movement(Board, Movement):-
   Movement=movement(From, _),
-  piece_at_position(Board, From, square_contents(bishop, _)),
+  piece_at_position(Board, From, square_contents(_, bishop)),
   bishop_movement(Movement).
 
 historyless_movement(Board, Movement):-
   Movement=movement(From, _),
-  piece_at_position(Board, From, square_contents(queen, _)),
+  piece_at_position(Board, From, square_contents(_, queen)),
   queen_movement(Movement).
 
 historyless_movement(Board, Movement):-
   Movement=movement(From, _),
-  piece_at_position(Board, From, square_contents(rook, _)),
+  piece_at_position(Board, From, square_contents(_, rook)),
   rook_movement(Movement).
 
 historyless_movement(Board, Movement):-
   Movement=movement(From, _),
-  piece_at_position(Board, From, square_contents(pawn, _)),
+  piece_at_position(Board, From, square_contents(_, pawn)),
   simple_pawn_movement(Board, Movement).
 
 
 historyless_capture(Board, movement(From, To), Captured):-
-  piece_at_position(Board, From, square_contents(_, CapturerColor)),
-  piece_at_position(Board, To, square_contents(Captured, CapturedColor)),
+  piece_at_position(Board, From, square_contents(CapturerColor, _)),
+  piece_at_position(Board, To, square_contents(CapturedColor, Captured)),
   opposite_color(CapturedColor, CapturerColor).
 
 simple_pawn_capture_movement(Board, Movement):-
