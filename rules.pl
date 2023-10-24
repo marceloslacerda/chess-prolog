@@ -72,7 +72,7 @@ diagonal_movement(movement(Previous, Next)) :-
 is_diagonal(X1, Y1, X2,  Y2):-
   C #= abs(X1 - X2),
   C #= abs(Y1 - Y2),
-  C #> 1.
+  C #> 0.
 
 
 opposite_color(black, white).
@@ -189,6 +189,7 @@ historyless_capture(Board, movement(From, To), Captured):-
   piece_at_position(Board, To, square_contents(CapturedColor, Captured)),
   opposite_color(CapturedColor, CapturerColor).
 
+% Only models the movement of capture, not the capture itself
 simple_pawn_capture_movement(Board, Movement):-
   enemywise_movement(Board, Movement),
   diagonal_movement(Movement),

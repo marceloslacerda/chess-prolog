@@ -198,7 +198,39 @@ test(historyless_movement):-
     true.
 
 test(simple_pawn_capture_movement):-
-    simple_pawn_capture_movement([[square_contents(white, pawn)],[square_contents(nothing), square_contents(pawn, black)]], movement(position(1, a), position(2, b))),
+    simple_pawn_capture_movement(
+        [
+            [square_contents(white, pawn)],
+            [
+                square_contents(nothing),
+                square_contents(black, pawn)
+            ]
+        ],
+        movement(position(1, a), position(2, b))),
+    simple_pawn_capture_movement(
+        [
+            [
+                square_contents(nothing),
+                square_contents(white, pawn)
+            ],
+            [
+                square_contents(black, pawn),
+                square_contents(nothing)
+            ]
+        ],
+        movement(position(1, b), position(2, a))),
+    \+ simple_pawn_capture_movement(
+        [
+            [
+                square_contents(nothing),
+                square_contents(white, pawn)
+            ],
+            [
+                square_contents(nothing),
+                square_contents(black, pawn)
+            ]
+        ],
+        movement(position(1, b), position(1, a))),
     true.
 
 :- end_tests(rules).
