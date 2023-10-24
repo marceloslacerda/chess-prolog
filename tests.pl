@@ -97,78 +97,78 @@ test(enemywise_movement):-
         ], movement(position(2, a), position(1, a))).
     
 test(simple_pawn_movement):-
-    simple_pawn_movement([[(pawn, white)], [nothing]], ((1, a), (2, a))),
-    \+ simple_pawn_movement([[(pawn, white)], [nothing]], ((1, a), (3, a))),
-    \+ simple_pawn_movement([[(pawn, white)], [nothing]], ((1, a), (2, b))).
+    simple_pawn_movement([[square_contents(white, pawn)], [square_contents(nothing)]], (position(1, a), position(2, a))),
+    \+ simple_pawn_movement([[square_contents(white, pawn)], [square_contents(nothing)]], (position(1, a), position(3, a))),
+    \+ simple_pawn_movement([[square_contents(white, pawn)], [square_contents(nothing)]], (position(1, a), position(2, b))).
 
 test(bishop_movement):-
-    bishop_movement(((1, a), (3, c))),
-    bishop_movement(((3, c), (1, a))),
-    bishop_movement(((4, h), (1, e))),
-    bishop_movement(((1, e), (4, h))),
-    \+ bishop_movement(((1, a), (3, b))),
-    \+ bishop_movement(((1, a), (2, a))),
-    \+ bishop_movement(((1, a), (1, b))).
+    bishop_movement(movement(position(1, a), position(3, c))),
+    bishop_movement(movement(position(3, c), position(1, a))),
+    bishop_movement(movement(position(4, h), position(1, e))),
+    bishop_movement(movement(position(1, e), position(4, h))),
+    \+ bishop_movement(movement(position(1, a), position(3, b))),
+    \+ bishop_movement(movement(position(1, a), position(2, a))),
+    \+ bishop_movement(movement(position(1, a), position(1, b))).
 
 test(rook_movement):-
-    rook_movement(((1, a), (1, c))),
-    rook_movement(((1, c), (1, a))),
-    rook_movement(((1, a), (3, a))),
-    rook_movement(((3, a), (1, a))),
-    \+ rook_movement(((4, h), (1, e))),
-    \+ rook_movement(((1, e), (4, h))),
-    \+ rook_movement(((1, a), (3, b))).
+    rook_movement(movement(position(1, a), position(1, c))),
+    rook_movement(movement(position(1, c), position(1, a))),
+    rook_movement(movement(position(1, a), position(3, a))),
+    rook_movement(movement(position(3, a), position(1, a))),
+    \+ rook_movement(movement(position(4, h), position(1, e))),
+    \+ rook_movement(movement(position(1, e), position(4, h))),
+    \+ rook_movement(movement(position(1, a), position(3, b))).
 
 test(queen_movement):-
-    queen_movement(((1, a), (1, c))),
-    queen_movement(((1, c), (1, a))),
-    queen_movement(((1, a), (3, a))),
-    queen_movement(((3, a), (1, a))),
-    queen_movement(((1, a), (3, c))),
-    queen_movement(((3, c), (1, a))),
-    queen_movement(((4, h), (1, e))),
-    queen_movement(((1, e), (4, h))),
-    \+ queen_movement(((1, a), (3, b))).
+    queen_movement(movement(position(1, a), position(1, c))),
+    queen_movement(movement(position(1, c), position(1, a))),
+    queen_movement(movement(position(1, a), position(3, a))),
+    queen_movement(movement(position(3, a), position(1, a))),
+    queen_movement(movement(position(1, a), position(3, c))),
+    queen_movement(movement(position(3, c), position(1, a))),
+    queen_movement(movement(position(4, h), position(1, e))),
+    queen_movement(movement(position(1, e), position(4, h))),
+    \+ queen_movement(movement(position(1, a), position(3, b))).
 
 test(knight_movement):-
-    knight_movement(((1, a), (3, b))),
-    knight_movement(((1, b), (3, a))),
-    knight_movement(((1, a), (2, c))),
-    knight_movement(((1, a), (2, c))),
-    knight_movement(((2, a), (1, c))),
-    \+ knight_movement(((1, a), (1, c))),
-    \+ knight_movement(((3, a), (1, a))),
-    \+ knight_movement(((1, a), (3, c))),
-    \+ knight_movement(((3, c), (1, a))).
+    knight_movement(movement(position(1, a), position(3, b))),
+    knight_movement(movement(position(1, b), position(3, a))),
+    knight_movement(movement(position(1, a), position(2, c))),
+    knight_movement(movement(position(1, a), position(2, c))),
+    knight_movement(movement(position(2, a), position(1, c))),
+    \+ knight_movement(movement(position(1, a), position(1, c))),
+    \+ knight_movement(movement(position(3, a), position(1, a))),
+    \+ knight_movement(movement(position(1, a), position(3, c))),
+    \+ knight_movement(movement(position(3, c), position(1, a))).
 
 
 test(king_movement):-
-    king_movement(((2, b), (1, a))),
-    king_movement(((2, b), (1, b))),
-    king_movement(((2, b), (2, a))),
-    king_movement(((2, b), (3, a))),
-    king_movement(((2, b), (3, b))),
-    king_movement(((2, b), (3, c))),
-    king_movement(((2, b), (2, c))),
-    \+ king_movement(((2, b), (4, b))).
+    king_movement(movement(position(2, b), position(1, a))),
+    king_movement(movement(position(2, b), position(1, b))),
+    king_movement(movement(position(2, b), position(2, a))),
+    king_movement(movement(position(2, b), position(3, a))),
+    king_movement(movement(position(2, b), position(3, b))),
+    king_movement(movement(position(2, b), position(3, c))),
+    king_movement(movement(position(2, b), position(2, c))),
+    \+ king_movement(movement(position(2, b), position(4, b))).
 
 test(historyless_movement):-
-    historyless_movement([[(pawn, white)]], ((1, a), (2, a))),
-    \+ historyless_movement([[(pawn, white)], [nothing]], ((1, a), (2, b))),
-    historyless_movement([[(bishop, white)]], ((1, a), (3, c))),
-    \+ historyless_movement([[(bishop, white)]], ((1, a), (3, b))),
-    historyless_movement([[(rook, white)]], ((1, a), (1, c))),
-    \+ historyless_movement([[(rook, white)]], ((1, a), (3, c))),
-    historyless_movement([[(queen, white)]], ((1, a), (1, c))),
-    \+ historyless_movement([[(queen, white)]], ((1, a), (3, b))),
-    historyless_movement([[(knight, white)]], ((1, a), (3, b))),
-    \+ historyless_movement([[(knight, white)]], ((1, a), (1, c))),
-    historyless_movement([[(king, white)]], ((1, a), (2, b))),
-    \+ historyless_movement([[(king, white)]], ((1, a), (1, c))),
+    historyless_movement([[square_contents(white, pawn)]], movement(position(1, a), position(2, a))),
+    \+ historyless_movement([[square_contents(white, pawn)], [square_contents(nothing)]], movement(position(1, a), position(2, b))),
+    historyless_movement([[square_contents(white, bishop)]], movement(position(1, a), position(3, c))),
+    \+ historyless_movement([[square_contents(white, bishop)]], movement(position(1, a), position(3, b))),
+    historyless_movement([[square_contents(white, rook)]], movement(position(1, a), position(1, c))),
+    \+ historyless_movement([[square_contents(white, rook)]], movement(position(1, a), position(3, c))),
+    historyless_movement([[square_contents(white, queen)]], movement(position(1, a), position(1, c))),
+    \+ historyless_movement([[square_contents(white, queen)]], movement(position(1, a), position(3, b))),
+    historyless_movement([[square_contents(knight, white)]], movement(position(1, a), position(3, b))),
+    \+ historyless_movement([[square_contents(knight, white)]], movement(position(1, a), position(1, c))),
+    historyless_movement([[square_contents(white, king)]], movement(position(1, a), position(2, b))),
+    \+ historyless_movement([[square_contents(white, king)]], movement(position(1, a), position(1, c))),
     true.
 
 test(simple_pawn_capture_movement):-
-    simple_pawn_capture_movement([[(pawn, white)],[nothing, (pawn, black)]], ((1, a), (2, b))),
+    simple_pawn_capture_movement([[square_contents(white, pawn)],[square_contents(nothing), square_contents(pawn, black)]], movement(position(1, a), position(2, b))),
     true.
 
 :- end_tests(rules).

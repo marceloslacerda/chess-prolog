@@ -123,9 +123,10 @@ queen_movement(Movement) :-
   bishop_movement(Movement).
 
 
-knight_movement((From, To)):-
-  position(From, R1, L1),
-  position(To, R2, L2),
+knight_movement(movement(From, To)):-
+  From = position(R1, L1),
+  To = position(R2, L2),
+  From, To,
   letter_as_idx(L1, Col1),
   letter_as_idx(L2, Col2),
   (
@@ -139,9 +140,10 @@ knight_movement((From, To)):-
     )
   ).
 
-king_movement((From, To)):-
-  position(From, R1, L1),
-  position(To, R2, L2),
+king_movement(movement(From, To)):-
+  From = position(R1, L1),
+  To = position(R2, L2),
+  From, To,
   letter_as_idx(L1, Col1),
   letter_as_idx(L2, Col2),
   DistV #= abs(R1 - R2),
@@ -152,39 +154,39 @@ king_movement((From, To)):-
   3 #> DistV + DistH.
 
 historyless_movement(Board, Movement):-
-  Movement=(From, _),
-  piece_at_position(Board, From, (king, _)),
+  Movement=movement(From, _),
+  piece_at_position(Board, From, square_contents(_, king)),
   king_movement(Movement).
 
 historyless_movement(Board, Movement):-
-  Movement=(From, _),
-  piece_at_position(Board, From, (knight, _)),
+  Movement=movement(From, _),
+  piece_at_position(Board, From, square_contents(knight, _)),
   knight_movement(Movement).
 
 historyless_movement(Board, Movement):-
-  Movement=(From, _),
-  piece_at_position(Board, From, (bishop, _)),
+  Movement=movement(From, _),
+  piece_at_position(Board, From, square_contents(bishop, _)),
   bishop_movement(Movement).
 
 historyless_movement(Board, Movement):-
-  Movement=(From, _),
-  piece_at_position(Board, From, (queen, _)),
+  Movement=movement(From, _),
+  piece_at_position(Board, From, square_contents(queen, _)),
   queen_movement(Movement).
 
 historyless_movement(Board, Movement):-
-  Movement=(From, _),
-  piece_at_position(Board, From, (rook, _)),
+  Movement=movement(From, _),
+  piece_at_position(Board, From, square_contents(rook, _)),
   rook_movement(Movement).
 
 historyless_movement(Board, Movement):-
-  Movement=(From, _),
-  piece_at_position(Board, From, (pawn, _)),
+  Movement=movement(From, _),
+  piece_at_position(Board, From, square_contents(pawn, _)),
   simple_pawn_movement(Board, Movement).
 
 
-historyless_capture(Board, (From, To), Captured):-
-  piece_at_position(Board, From, (_, CapturerColor)),
-  piece_at_position(Board, To, (Captured, CapturedColor)),
+historyless_capture(Board, movement(From, To), Captured):-
+  piece_at_position(Board, From, square_contents(_, CapturerColor)),
+  piece_at_position(Board, To, square_contents(Captured, CapturedColor)),
   opposite_color(CapturedColor, CapturerColor).
 
 simple_pawn_capture_movement(Board, Movement):-
@@ -200,7 +202,7 @@ historyless_action(Board, Movement, Captured):-
   simple_pawn_capture_movement(Board, Movement),
   historyless_capture(Board, Movement, Captured).
 
-historyless_action(Board, Movement, nothing):-
+historyless_action(Board, Movement, square_contents(nothing)):-
   historyless_movement(Board, Movement).
 
 % todo historied actions
