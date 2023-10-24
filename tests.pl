@@ -177,16 +177,22 @@ test(king_movement):-
     \+ king_movement(movement(position(2, b), position(4, b))).
 
 test(historyless_movement):-
-    historyless_movement([[square_contents(white, pawn)]], movement(position(1, a), position(2, a))),
-    \+ historyless_movement([[square_contents(white, pawn)], [square_contents(nothing)]], movement(position(1, a), position(2, b))),
+    historyless_movement(
+        [[square_contents(white, pawn)]],
+        movement(position(1, a), position(2, a))
+    ),
+    \+ historyless_movement(
+        [[square_contents(white, pawn)],[square_contents(nothing)]],
+        movement(position(1, a), position(2, b))
+    ),
     historyless_movement([[square_contents(white, bishop)]], movement(position(1, a), position(3, c))),
     \+ historyless_movement([[square_contents(white, bishop)]], movement(position(1, a), position(3, b))),
     historyless_movement([[square_contents(white, rook)]], movement(position(1, a), position(1, c))),
     \+ historyless_movement([[square_contents(white, rook)]], movement(position(1, a), position(3, c))),
     historyless_movement([[square_contents(white, queen)]], movement(position(1, a), position(1, c))),
     \+ historyless_movement([[square_contents(white, queen)]], movement(position(1, a), position(3, b))),
-    historyless_movement([[square_contents(knight, white)]], movement(position(1, a), position(3, b))),
-    \+ historyless_movement([[square_contents(knight, white)]], movement(position(1, a), position(1, c))),
+    historyless_movement([[square_contents(white, knight)]], movement(position(1, a), position(3, b))),
+    \+ historyless_movement([[square_contents(white, knight)]], movement(position(1, a), position(1, c))),
     historyless_movement([[square_contents(white, king)]], movement(position(1, a), position(2, b))),
     \+ historyless_movement([[square_contents(white, king)]], movement(position(1, a), position(1, c))),
     true.
