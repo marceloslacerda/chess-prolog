@@ -184,9 +184,11 @@ historyless_movement(Board, Movement):-
   simple_pawn_movement(Board, Movement).
 
 
+% holds for a movement where a piece lands on top of another (different colors)
 historyless_capture(Board, movement(From, To), Captured):-
   piece_at_position(Board, From, square_contents(CapturerColor, _)),
-  piece_at_position(Board, To, square_contents(CapturedColor, Captured)),
+  piece_at_position(Board, To, Captured),
+  Captured=square_contents(CapturedColor, _),
   opposite_color(CapturedColor, CapturerColor).
 
 % Only models the movement of capture, not the capture itself

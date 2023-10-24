@@ -197,6 +197,28 @@ test(historyless_movement):-
     \+ historyless_movement([[square_contents(white, king)]], movement(position(1, a), position(1, c))),
     true.
 
+test(historyless_capture):-
+    historyless_capture(
+        [
+            [
+                square_contents(black, pawn),
+                square_contents(white, pawn)
+            ]
+        ],
+        movement(position(1, a), position(1, b)),
+        square_contents(white, pawn)
+    ),
+    \+ historyless_capture(
+        [
+            [
+                square_contents(black, pawn),
+                square_contents(nothing)
+            ]
+        ],
+        movement(position(1, a), position(1, b)),
+        _
+    ).
+
 test(simple_pawn_capture_movement):-
     simple_pawn_capture_movement(
         [
