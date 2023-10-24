@@ -206,7 +206,9 @@ historyless_action(Board, Movement, Captured):-
   historyless_capture(Board, Movement, Captured).
 
 historyless_action(Board, Movement, square_contents(nothing)):-
-  historyless_movement(Board, Movement).
+  historyless_movement(Board, Movement),
+  Movement=movement(_, To),
+  piece_at_position(Board, To, square_contents(nothing)).
 
 % todo historied actions
 

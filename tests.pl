@@ -255,4 +255,56 @@ test(simple_pawn_capture_movement):-
         movement(position(1, b), position(1, a))),
     true.
 
+test(historyless_action_pawn):-
+    historyless_action(
+        [
+            [square_contents(white, pawn)],
+            [
+                square_contents(nothing),
+                square_contents(black, pawn)
+            ]
+        ],
+        movement(position(1, a), position(2, b)),
+        square_contents(black, pawn)
+    ),
+    \+ historyless_action(
+        [
+            [square_contents(white, pawn)],
+            [
+                square_contents(black, pawn),
+                square_contents(nothing)
+            ]
+        ],
+        movement(position(1, a), position(2, b)),
+        square_contents(black, pawn)
+    ).
+
+test(historyless_action_others_no_capture):-
+    historyless_action(
+        [
+            [square_contents(white, rook)],
+            [square_contents(nothing)]
+        ],
+        movement(position(1, a), position(2, a)),
+        square_contents(nothing)
+    ),
+    \+ historyless_action(
+        [
+            [square_contents(white, rook)],
+            [square_contents(white, king)]
+        ],
+        movement(position(1, a), position(2, a)),
+        _
+    ).
+
+test(historyless_action_others_capture):-
+    historyless_action(
+        [
+            [square_contents(white, rook)],
+            [square_contents(black, pawn)]
+        ],
+        movement(position(1, a), position(2, a)),
+        square_contents(black, pawn)
+    ).
+
 :- end_tests(rules).
