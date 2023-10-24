@@ -103,9 +103,27 @@ test(enemywise_movement):-
         ], movement(position(2, a), position(1, a))).
     
 test(simple_pawn_movement):-
-    simple_pawn_movement([[square_contents(white, pawn)], [square_contents(nothing)]], (position(1, a), position(2, a))),
-    \+ simple_pawn_movement([[square_contents(white, pawn)], [square_contents(nothing)]], (position(1, a), position(3, a))),
-    \+ simple_pawn_movement([[square_contents(white, pawn)], [square_contents(nothing)]], (position(1, a), position(2, b))).
+    simple_pawn_movement(
+        [
+            [square_contents(white, pawn)],
+            [square_contents(nothing)]
+        ],
+        movement(position(1, a), position(2, a))
+    ),
+    \+ simple_pawn_movement(
+        [
+            [square_contents(white, pawn)],
+            [square_contents(nothing)]
+        ],
+        movement(position(1, a), position(3, a))
+    ),
+    \+ simple_pawn_movement(
+        [
+            [square_contents(white, pawn)],
+            [square_contents(nothing)]
+        ],
+        (position(1, a), position(2, b))
+    ).
 
 test(bishop_movement):-
     bishop_movement(movement(position(1, a), position(3, c))),
