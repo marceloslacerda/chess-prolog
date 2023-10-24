@@ -69,12 +69,33 @@ test(piece_at_position):-
         [square_contents(white, pawn)]
       ], position(1, a), square_contents(white, pawn)).
 
-test(enemywise_movement):-
-    enemywise_movement([[(_, white)], [nothing]], ((1, _), (2, _))),
-    enemywise_movement([empty, [(_, black)]], ((2, _), (1, _))),
-    \+ enemywise_movement([[(_, black)]], ((1, _), (2, _))),
-    \+ enemywise_movement([empty, [(_, white)]], ((2, _), (1, _))).
 
+test(player_color):-
+    player_color([[square_contents(white, _)]], position(1, a), white).
+
+
+test(enemywise_movement):-
+    enemywise_movement(
+        [
+            [square_contents(white, _)],
+            [square_contents(nothing)]
+        ],
+        movement(position(1, a), position(2, a))),
+    enemywise_movement(
+        [
+            [square_contents(nothing)],
+            [square_contents(black, _)]
+        ], movement(position(2, a), position(1, a))),
+    \+ enemywise_movement(
+        [
+            [(black, _)]
+        ], movement(position(1, a), position(2, a))),
+    \+ enemywise_movement(
+        [
+            [square_contents(nothing)],
+            [square_contents(white, _)]
+        ], movement(position(2, a), position(1, a))).
+    
 test(simple_pawn_movement):-
     simple_pawn_movement([[(pawn, white)], [nothing]], ((1, a), (2, a))),
     \+ simple_pawn_movement([[(pawn, white)], [nothing]], ((1, a), (3, a))),

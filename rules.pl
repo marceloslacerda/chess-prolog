@@ -26,7 +26,7 @@ valid_color(black).
 
 square_contents(nothing).
 
-square_contents(Piece, Color):-
+square_contents(Color, Piece):-
   valid_piece(Piece),
   valid_color(Color).
 
@@ -83,19 +83,21 @@ opposite_color(white, black).
 piece_at_position(Board, position(Number, Letter), Piece) :-
   (
     Piece = square_contents(_, _);
-    Piece = square_contents(nothing)
+    Piece = square_contents(_)
   ),
+  Piece,
   nth1(Number, Board, Row),
   letter_as_idx(Letter, Lidx),
   nth1(Lidx, Row, Piece).
 
-player_color(Board, Location, Color) :-
-  piece_at_position(Board, Location, square_contents(_, Color)).
 
-enemywise_movement(Board, (From, To)) :-
-  opposite_color(PieceColor, EnemyColor),
+player_color(Board, Location, Color) :-
+  piece_at_position(Board, Location, square_contents(Color, _)).
+
+enemywise_movement(Board, movement(From, To)) :-
   player_color(Board, From, PieceColor),
-  colorwards_movement(EnemyColor, (From, To)).
+  opposite_color(PieceColor, EnemyColor),
+  colorwards_movement(EnemyColor, movement(From, To)).
 
 vertical_distance(((FromRow, _), (ToRow, _)), Distance):-
   Distance #= abs(FromRow - ToRow).
