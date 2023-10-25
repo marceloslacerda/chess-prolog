@@ -1,5 +1,6 @@
 :- use_module(library(lists)).
 :- use_module(library(clpfd)).
+:- ['util.pl'].
 
 
 valid_row(Row) :-
@@ -107,6 +108,12 @@ simple_pawn_movement(Board, Movement) :-
   enemywise_movement(Board, Movement),
   not(sideways_movement(Movement)),
   vertical_distance(Movement, 1).
+
+
+horizontal_distance(FromLetter, ToLetter, Distance):-
+  letter_as_idx(FromLetter, FromColumn),
+  letter_as_idx(ToLetter, ToColumn),
+  Distance #= abs(ToColumn-FromColumn).
 
 
 skip_two_squares_pawn_move(Board, Movement):-
@@ -266,10 +273,6 @@ board_state(
   HalfmoveClock #=< 50,
   FullmoveNumber #>= 1. 
 
-horizontal_distance(FromLetter, ToLetter, Distance):-
-  letter_as_idx(FromLetter, FromColumn),
-  letter_as_idx(ToLetter, ToColumn),
-  Distance #= abs(ToColumn-FromColumn).
 
 
 % todo historied actions
