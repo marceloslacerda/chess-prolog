@@ -102,10 +102,28 @@ enemywise_movement(Board, movement(From, To)) :-
 vertical_distance(movement(position(FromRow, _), position(ToRow, _)), Distance):-
   Distance #= abs(FromRow - ToRow).
 
+
 simple_pawn_movement(Board, Movement) :-
   enemywise_movement(Board, Movement),
   not(sideways_movement(Movement)),
   vertical_distance(Movement, 1).
+
+
+skip_two_squares_pawn_move(Board, Movement):-
+  Movement = movement(position(2, FromLetter), position(4, ToLetter)),
+  piece_at_position(Board, position(2, FromLetter), square_contents(white, pawn)),
+  horizontal_distance(FromLetter, ToLetter, 0).
+
+skip_two_squares_pawn_move(Board, Movement):-
+  Movement = movement(position(7, FromLetter), position(5, ToLetter)),
+  piece_at_position(Board, position(7, FromLetter), square_contents(black, pawn)),
+  horizontal_distance(FromLetter, ToLetter, 0).
+
+pawn_movement(Board, Movement):-
+  simple_pawn_movement(Board, Movement).
+
+pawn_movement(Board, Movement):-
+  skip_two_squares_pawn_move(Board, Movement).
 
 bishop_movement(Movement) :-
   diagonal_movement(Movement).
@@ -153,39 +171,39 @@ king_movement(movement(From, To)):-
   0 #< DistV + DistH,
   3 #> DistV + DistH.
 
-historyless_movement(Board, Movement):-
+stateless_movement(Board, Movement):-
   Movement=movement(From, _),
   piece_at_position(Board, From, square_contents(_, king)),
   king_movement(Movement).
 
-historyless_movement(Board, Movement):-
+stateless_movement(Board, Movement):-
   Movement=movement(From, _),
   piece_at_position(Board, From, square_contents(_, knight)),
   knight_movement(Movement).
 
-historyless_movement(Board, Movement):-
+stateless_movement(Board, Movement):-
   Movement=movement(From, _),
   piece_at_position(Board, From, square_contents(_, bishop)),
   bishop_movement(Movement).
 
-historyless_movement(Board, Movement):-
+stateless_movement(Board, Movement):-
   Movement=movement(From, _),
   piece_at_position(Board, From, square_contents(_, queen)),
   queen_movement(Movement).
 
-historyless_movement(Board, Movement):-
+stateless_movement(Board, Movement):-
   Movement=movement(From, _),
   piece_at_position(Board, From, square_contents(_, rook)),
   rook_movement(Movement).
 
-historyless_movement(Board, Movement):-
+stateless_movement(Board, Movement):-
   Movement=movement(From, _),
   piece_at_position(Board, From, square_contents(_, pawn)),
-  simple_pawn_movement(Board, Movement).
+  pawn_movement(Board, Movement).
 
 
 % holds for a movement where a piece lands on top of another (different colors)
-historyless_capture(Board, movement(From, To), Captured):-
+stateless_capture(Board, movement(From, To), Captured):-
   piece_at_position(Board, From, square_contents(CapturerColor, _)),
   piece_at_position(Board, To, Captured),
   Captured=square_contents(CapturedColor, _),
@@ -197,18 +215,62 @@ simple_pawn_capture_movement(Board, Movement):-
   diagonal_movement(Movement),
   vertical_distance(Movement, 1).
 
-historyless_action(Board, Movement, Captured):-
-  historyless_movement(Board, Movement),
-  historyless_capture(Board, Movement, Captured).
 
-historyless_action(Board, Movement, Captured):-
+stateless_action(Board, Movement, Captured):-
+  stateless_movement(Board, Movement),
+  stateless_capture(Board, Movement, Captured).
+
+stateless_action(Board, Movement, Captured):-
+  Movement=movement(From, _),
+  piece_at_position(Board, From, square_contents(_, pawn)), % todo forgot to test this
   simple_pawn_capture_movement(Board, Movement),
-  historyless_capture(Board, Movement, Captured).
+  stateless_capture(Board, Movement, Captured).
 
-historyless_action(Board, Movement, square_contents(nothing)):-
-  historyless_movement(Board, Movement),
+stateless_action(Board, Movement, square_contents(nothing)):-
+  stateless_movement(Board, Movement),
   Movement=movement(_, To),
   piece_at_position(Board, To, square_contents(nothing)).
+
+
+castling_side(queen).
+castling_side(king).
+
+castling_avaliability(Color, []):-
+  valid_color(Color).
+
+castling_avaliability(Color, [CastlingSide|Others]):-
+  castling_side(CastlingSide),
+  castling_avaliability(Color, Others).
+
+enpassant_target(nowhere).
+
+enpassant_target(Target):-
+  Target=position(_, _),
+  Target.
+
+board_state(
+  _, % List of list of square_contents
+  ActiveColor,
+  WhiteCastlingAvaliability,
+  BlackCastlingAvaliability,
+  EnPassantTarget,
+  HalfmoveClock,
+  FullmoveNumber
+  ):-
+  valid_color(ActiveColor),
+  WhiteCastlingAvaliability = castling_avaliability(white, _),
+  BlackCastlingAvaliability = castling_avaliability(black, _),
+  EnPassantTarget=enpassant_target(_),
+  EnPassantTarget,
+  HalfmoveClock #>= 0,
+  HalfmoveClock #=< 50,
+  FullmoveNumber #>= 1. 
+
+horizontal_distance(FromLetter, ToLetter, Distance):-
+  letter_as_idx(FromLetter, FromColumn),
+  letter_as_idx(ToLetter, ToColumn),
+  Distance #= abs(ToColumn-FromColumn).
+
 
 % todo historied actions
 

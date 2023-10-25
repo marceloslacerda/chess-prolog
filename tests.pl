@@ -125,6 +125,24 @@ test(simple_pawn_movement):-
         (position(1, a), position(2, b))
     ).
 
+test(skip_two_squares_pawn_move):-
+    skip_two_squares_pawn_move(
+        [[],[square_contents(white, pawn)],[],[],[],[],[],[]],
+        movement(position(2, a),
+        position(4, a))),
+    skip_two_squares_pawn_move(
+        [[],[],[],[],[],[],[square_contents(black, pawn)],[]],
+        movement(position(7, a),
+        position(5, a))),
+    \+ skip_two_squares_pawn_move(
+        [[],[],[],[],[],[],[square_contents(white, pawn)],[]],
+        movement(position(7, a),
+        position(5, a))),
+    \+ skip_two_squares_pawn_move(
+        [[],[],[],[],[],[],[square_contents(black, pawn)],[]],
+        movement(position(7, a),
+        position(6, a))).
+
 test(bishop_movement):-
     bishop_movement(movement(position(1, a), position(3, c))),
     bishop_movement(movement(position(3, c), position(1, a))),
@@ -176,29 +194,29 @@ test(king_movement):-
     king_movement(movement(position(2, b), position(2, c))),
     \+ king_movement(movement(position(2, b), position(4, b))).
 
-test(historyless_movement):-
-    historyless_movement(
+test(stateless_movement):-
+    stateless_movement(
         [[square_contents(white, pawn)]],
         movement(position(1, a), position(2, a))
     ),
-    \+ historyless_movement(
+    \+ stateless_movement(
         [[square_contents(white, pawn)],[square_contents(nothing)]],
         movement(position(1, a), position(2, b))
     ),
-    historyless_movement([[square_contents(white, bishop)]], movement(position(1, a), position(3, c))),
-    \+ historyless_movement([[square_contents(white, bishop)]], movement(position(1, a), position(3, b))),
-    historyless_movement([[square_contents(white, rook)]], movement(position(1, a), position(1, c))),
-    \+ historyless_movement([[square_contents(white, rook)]], movement(position(1, a), position(3, c))),
-    historyless_movement([[square_contents(white, queen)]], movement(position(1, a), position(1, c))),
-    \+ historyless_movement([[square_contents(white, queen)]], movement(position(1, a), position(3, b))),
-    historyless_movement([[square_contents(white, knight)]], movement(position(1, a), position(3, b))),
-    \+ historyless_movement([[square_contents(white, knight)]], movement(position(1, a), position(1, c))),
-    historyless_movement([[square_contents(white, king)]], movement(position(1, a), position(2, b))),
-    \+ historyless_movement([[square_contents(white, king)]], movement(position(1, a), position(1, c))),
+    stateless_movement([[square_contents(white, bishop)]], movement(position(1, a), position(3, c))),
+    \+ stateless_movement([[square_contents(white, bishop)]], movement(position(1, a), position(3, b))),
+    stateless_movement([[square_contents(white, rook)]], movement(position(1, a), position(1, c))),
+    \+ stateless_movement([[square_contents(white, rook)]], movement(position(1, a), position(3, c))),
+    stateless_movement([[square_contents(white, queen)]], movement(position(1, a), position(1, c))),
+    \+ stateless_movement([[square_contents(white, queen)]], movement(position(1, a), position(3, b))),
+    stateless_movement([[square_contents(white, knight)]], movement(position(1, a), position(3, b))),
+    \+ stateless_movement([[square_contents(white, knight)]], movement(position(1, a), position(1, c))),
+    stateless_movement([[square_contents(white, king)]], movement(position(1, a), position(2, b))),
+    \+ stateless_movement([[square_contents(white, king)]], movement(position(1, a), position(1, c))),
     true.
 
-test(historyless_capture):-
-    historyless_capture(
+test(stateless_capture):-
+    stateless_capture(
         [
             [
                 square_contents(black, pawn),
@@ -208,7 +226,7 @@ test(historyless_capture):-
         movement(position(1, a), position(1, b)),
         square_contents(white, pawn)
     ),
-    \+ historyless_capture(
+    \+ stateless_capture(
         [
             [
                 square_contents(black, pawn),
@@ -255,8 +273,8 @@ test(simple_pawn_capture_movement):-
         movement(position(1, b), position(1, a))),
     true.
 
-test(historyless_action_pawn):-
-    historyless_action(
+test(stateless_action_pawn):-
+    stateless_action(
         [
             [square_contents(white, pawn)],
             [
@@ -267,7 +285,7 @@ test(historyless_action_pawn):-
         movement(position(1, a), position(2, b)),
         square_contents(black, pawn)
     ),
-    \+ historyless_action(
+    \+ stateless_action(
         [
             [square_contents(white, pawn)],
             [
@@ -277,10 +295,21 @@ test(historyless_action_pawn):-
         ],
         movement(position(1, a), position(2, b)),
         square_contents(black, pawn)
+    ),
+    \+ stateless_action(
+        [
+            [square_contents(white, rook)],
+            [
+                square_contents(black, pawn),
+                square_contents(nothing)
+            ]
+        ],
+        movement(position(1, a), position(2, b)),
+        square_contents(black, pawn)
     ).
 
-test(historyless_action_others_no_capture):-
-    historyless_action(
+test(stateless_action_others_no_capture):-
+    stateless_action(
         [
             [square_contents(white, rook)],
             [square_contents(nothing)]
@@ -288,7 +317,7 @@ test(historyless_action_others_no_capture):-
         movement(position(1, a), position(2, a)),
         square_contents(nothing)
     ),
-    \+ historyless_action(
+    \+ stateless_action(
         [
             [square_contents(white, rook)],
             [square_contents(white, king)]
@@ -297,8 +326,8 @@ test(historyless_action_others_no_capture):-
         _
     ).
 
-test(historyless_action_others_capture):-
-    historyless_action(
+test(stateless_action_others_capture):-
+    stateless_action(
         [
             [square_contents(white, rook)],
             [square_contents(black, pawn)]
